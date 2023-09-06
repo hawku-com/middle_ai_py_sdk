@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "middle-ai-py-sdk"
+version = "0.1.0"
+description = "Middle AI Python SDK"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+opentelemetry-api = "^1.20.0"
+opentelemetry-exporter-otlp-proto-grpc = "^1.20.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
