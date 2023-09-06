@@ -25,7 +25,7 @@ class Tracer:
         self._tracer = trace.get_tracer("MiddleAI", tracer_provider=tracer_provider)
 
     def start_trace(self, name: str, model: str, model_params: map, prompt: str, user: str, thread_id: str = "") -> Span:
-        parsed_model_params = self._parse_model_params(model_params)
+        parsed_model_params = self._flatten_dict(model_params)
 
         attributes = {
             "llm_model": model,
