@@ -48,13 +48,13 @@ class Tracer:
             span.set_attribute("llm_output", output)
             span.end()
 
-    def _flatten_dict(self, model_params: map, parent_key: str = '') -> map:
+    def _flatten_dict(self, model_params: MutableMapping, parent_key: str = '') -> map:
         return dict(self._flatten_dict_gen(model_params, parent_key))
 
     def _flatten_dict_gen(self, model_params, parent_key) -> map:
         for k, v in model_params.items():
             new_key = parent_key + "." + k if parent_key else k
-            if isinstance(v, map):
+            if isinstance(v, MutableMapping):
                 yield from self._flatten_dict(v, new_key).items()
             else:
                 yield new_key, v
