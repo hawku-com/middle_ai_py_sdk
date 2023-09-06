@@ -12,36 +12,41 @@ class Tracer:
     def __init__(self, name: str):
         self._name = name
 
-        tracer_provider = TracerProvider(
-            resource=Resource.create({"service.name": name})
-        )
-
         endpoint = os.getenv("MIDDLE_AI_ENDPOINT")
         api_key = os.getenv("MIDDLE_AI_API_KEY")
 
-        exporter = OTLPSpanExporter(endpoint=endpoint, headers={"x-middle-ai-api-key": api_key})
-        tracer_provider.add_span_processor(BatchSpanProcessor(exporter))
+        if endpoint is None:
+            self._tracer = None
+        else:
+            tracer_provider = TracerProvider(
+                resource=Resource.create({"service.name": name})
+            )
 
-        self._tracer = trace.get_tracer("MiddleAI", tracer_provider=tracer_provider)
+            exporter = OTLPSpanExporter(endpoint=endpoint, headers={"x-middle-ai-api-key": api_key})
+            tracer_provider.add_span_processor(BatchSpanProcessor(exporter))
 
-    def start_trace(self, name: str, model: str, model_params: map, prompt: str, user: str, thread_id: str = "") -> Span:
-        parsed_model_params = self._flatten_dict(model_params)
+            self._tracer = trace.get_tracer("MiddleAI", tracer_provider=tracer_provider)
 
-        attributes = {
-            "llm_model": model,
-            "enduser_id": user,
-            "user_prompt": prompt,
-            "application_ref": self._name,
-            "thread_id": thread_id
-        }
+    def start_trace(self, name: str, model: str, model_params: map, prompt: str, user: str, thread_id: str = "") -> Span | None:
+        if self._tracer is not None:
+            parsed_model_params = self._flatten_dict(model_params)
 
-        attributes.update(parsed_model_params)
+            attributes = {
+                "llm_model": model,
+                "enduser_id": user,
+                "user_prompt": prompt,
+                "application_ref": self._name,
+                "thread_id": thread_id
+            }
 
-        return self._tracer.start_span(name, attributes=attributes)
+            attributes.update(parsed_model_params)
 
-    def end_trace(self, span: Span, output: str) -> None:
-        span.set_attribute("llm_output", output)
-        span.end()
+            return self._tracer.start_span(name, attributes=attributes)
+
+    def end_trace(self, span: Span | None, output: str) -> None:
+        if span is not None:
+            span.set_attribute("llm_output", output)
+            span.end()
 
     def _flatten_dict(self, model_params: map, parent_key: str = '') -> map:
         return dict(self._flatten_dict_gen(model_params, parent_key))
