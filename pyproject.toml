@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "middle-ai-py-sdk"
+name = "middle-ai-sdk"
 version = "0.1.0"
 description = "Middle AI Python SDK"
 authors = ["Your Name <you@example.com>"]

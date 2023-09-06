@@ -2,11 +2,11 @@ import os
 
 from collections.abc import MutableMapping
 from opentelemetry import trace
-from opentelemetry import Span
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.trace import Span
 
 class Tracer:
     def __init__(self, name: str):

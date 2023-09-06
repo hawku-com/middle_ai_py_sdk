@@ -11,7 +11,7 @@ $ pip install git+https://github.com/hawku-com/middle_ai_py_sdk.git
 ## How to use
 
 ```python
-from middle_ai.sdk.tracer import Tracer
+from middle_ai_sdk.tracer import Tracer
 
 tracer = Tracer('app_reference')
 
