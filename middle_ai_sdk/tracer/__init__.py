@@ -27,7 +27,7 @@ class Tracer:
 
             self._tracer = trace.get_tracer("MiddleAI", tracer_provider=tracer_provider)
 
-    def start_trace(self, name: str, model: str, model_params: map, prompt: str, user: str, thread_id: str = "") -> Span | None:
+    def start_trace(self, name: str, model: str, model_params: map, prompt: str, user: str, thread_id: str, initial_prompt = "") -> Span | None:
         if self._tracer is not None:
             parsed_model_params = self._flatten_dict(model_params)
 
@@ -36,7 +36,8 @@ class Tracer:
                 "enduser_id": user,
                 "user_prompt": prompt,
                 "application_ref": self._name,
-                "thread_id": thread_id
+                "thread_id": thread_id,
+                "initial_prompt": initial_prompt
             }
 
             attributes.update(parsed_model_params)
@@ -48,7 +49,7 @@ class Tracer:
             span.set_attribute("llm_output", output)
             span.end()
 
-    def _flatten_dict(self, model_params: MutableMapping, parent_key: str = '') -> map:
+    def _flatten_dict(self, model_params: MutableMapping, parent_key: str = 'model_params') -> map:
         return dict(self._flatten_dict_gen(model_params, parent_key))
 
     def _flatten_dict_gen(self, model_params, parent_key) -> map:
